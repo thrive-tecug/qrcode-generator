@@ -1,0 +1,10 @@
+STARTED : Server stated :
+main : user='thet' start=1 count=55000 length=1 pre_string='thet@' pro_string='' overwrite=0
+thet : Still working with no errors yet.
+main : user='th' start=1 count=55000 length=1 pre_string='th@' pro_string='' overwrite=0
+th : Still working with no errors yet.
+stdout : b'Creating path :  OUTPUT\\thet\\1_21216\nCreating path :  OUTPUT\\thet\\21217_42432\nCreating path :  OUTPUT\\thet\\42433_63648\nfinal writing lines to  OUTPUT\\thet\\42433_63648\nDONE at 55000\n'
+stdout : b'Creating path :  OUTPUT\\th\\1_21216\nCreating path :  OUTPUT\\th\\21217_42432\nCreating path :  OUTPUT\\th\\42433_63648\nfinal writing lines to  OUTPUT\\th\\42433_63648\nDONE at 55000\n'
+main : user='w' start=1 count=1 length=1 pre_string='' pro_string='' overwrite=0
+stdout : b'Creating path :  OUTPUT\\w\\1_21216\nfinal writing lines to  OUTPUT\\w\\1_21216\nDONE at 1\n'
+w : Finished with no errors.
