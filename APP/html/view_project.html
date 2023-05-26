@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title id="main-title"></title>
+
+  <!-- Custom fonts for this template-->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+  <!-- Custom styles for this template-->
+  <link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="side-bar"></ul>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+          <!-- Sidebar Toggle (Topbar) -->
+          <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+          </button>
+
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown no-arrow">
+              <a class="nav-link dropdown-toggle" href="#" id="actionDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Actions</span>
+              </a>
+              <!-- Dropdown - User Information -->
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <span class="dropdown-item" onclick="window.location.href='downloads.html'">
+                  Progress
+                </span>
+                <div id="state-change-button"></div>
+                <div id="cancel-button"></div>
+              </div>
+            </li>
+
+            <div class="topbar-divider d-none d-sm-block"></div>
+
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown no-arrow">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small" id="sidebar-name"></span>
+                <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
+              </a>
+              <!-- Dropdown - User Information -->
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#" onclick="go_to_profile()">
+                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Profile
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Logout
+                </a>
+              </div>
+            </li>
+
+          </ul>
+
+        </nav>
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+
+          <!-- Page Heading -->
+          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">View Project</h1>
+          </div>
+            <form id="mainform" onsubmit="return false">
+              <div class="form-group row">
+                <div class="col-sm-2">Project Name</div>
+                <div class="col-sm-6 mb-3 mb-sm-0">
+                  <input type="text" class="form-control form-control-user" id="name" disabled="true">
+                </div>
+             </div>
+            <div class="form-group row">
+              <div class="col-sm-2">State</div>
+              <div class="col-sm-6 mb-3 mb-sm-0">
+                <input type="text" class="form-control form-control-user" id="state" disabled="true">
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-sm-2">Description</div>
+              <div class="col-sm-6 mb-3 mb-sm-0">
+                <input type="text" cols="2" class="form-control form-control-user" id="description" placeholder="Description" disabled="true">
+              </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-2">
+                    <div>Start Value</div>
+                </div>
+                <div class="col-sm-6 mb-3 mb-sm-0">
+                  <input type="number" class="form-control form-control-user" minlength="1" id="startvalue" value="0" disabled="true">
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-2">Count</div>
+                <div class="col-sm-6 mb-3 mb-sm-0">
+                  <input type="number" class="form-control form-control-user" minlength="1" id="count" value="1" disabled="true">
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-2">QR Serial Length</div>
+                <div class="col-sm-6 mb-3 mb-sm-0">
+                  <input type="number" class="form-control form-control-user" minlength="1" id="qr_serial_length" value="1" disabled="true">
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-2">CSV Serial Length</div>
+                <div class="col-sm-6 mb-3 mb-sm-0">
+                  <input type="number" class="form-control form-control-user" minlength="1" id="csv_serial_length" value="1" disabled="true">
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-2">Pre String</div>
+                <div class="col-sm-6 mb-3 mb-sm-0">
+                  <input type="text" class="form-control form-control-user" id="pre_string" disabled="true">
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-2">Pro String</div>
+                <div class="col-sm-6 mb-3 mb-sm-0">
+                    <input type="text" class="form-control form-control-user" id="pro_string" disabled="true">
+                </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-sm-2">Configuration</div>
+              <div class="col-sm-6 mb-3 mb-sm-0">
+                  <input type="text" class="form-control form-control-user" id="configurations" disabled="true">
+              </div>
+            </div>
+            <hr>
+            <div class="form-group row">
+              <div class="col-sm-2"><strong>PREVIEW</strong></div>
+            </div>
+            <div><span>Previews are actual output size</span></div>
+            <div><image id="preview-image"></image></div>
+            <div><span id="preview-text"></span></div>
+          </form>
+        </div>
+        <!-- /.container-fluid -->
+
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      <footer class="sticky-footer bg-white">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright &copy; QRGEN 2023</span>
+          </div>
+        </div>
+      </footer>
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <!-- Logout Modal-->
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-primary" href="login.html">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="js/sb-admin-2.min.js"></script>
+
+  <!-- Page level custom scripts -->
+  <script src="js/sidebar.js"></script>
+  <script src="js/utils.js"></script>
+
+  <script>
+    var name = get_active_name();
+    let interval = null;
+    console.log("name :", name);
+
+    // FILLING PAGE
+    document.getElementById("main-title").innerText = get_app_name() + " - Project";
+    document.getElementById("sidebar-name").innerText = name;
+
+    var get_form_data = function(){
+        var mainform = document.getElementById("mainform");
+
+        var name=mainform.name.value;
+        var startvalue=mainform.startvalue.value;
+        var count=mainform.count.value;
+        var description=mainform.description.value;
+        var qr_serial_length=mainform.qr_serial_length.value;
+        var csv_serial_length=mainform.csv_serial_length.value;
+        var pre_string=mainform.pre_string.value;
+        var pro_string=mainform.pro_string.value;
+        var config_name=mainform.configurations.value;
+        return [name,startvalue,count,description,qr_serial_length,csv_serial_length,pre_string,pro_string,config_name];
+    }
+
+    async function update_preview_section(){
+      var formdata = get_form_data();
+      var name=formdata[0];
+      var startvalue=formdata[1];
+      var count=formdata[2];
+      var description=formdata[3];
+      var qr_serial_length=formdata[4];
+      var csv_serial_length=formdata[5];
+      var pre_string = formdata[6];
+      var pro_string = formdata[7];
+      var config_name = formdata[8];
+
+      var fdata = new FormData();
+      fdata.append("name",name);
+      fdata.append("start_value",startvalue);
+      fdata.append("total",count);
+      fdata.append("description",description);
+      fdata.append("qr_serial_length",qr_serial_length);
+      fdata.append("csv_serial_length",csv_serial_length);
+      fdata.append("pre_string",pre_string);
+      fdata.append("pro_string",pro_string);
+      fdata.append("config_name",config_name);
+
+      var res = await api_post("/project/preview_image", fdata);
+      var data_js = await res.json();
+      if(data_js["status"]==="success"){
+        var data = data_js["data"];
+        var b = "data:image/gif;base64,"+data;
+        document.getElementById("preview-image").src = b;
+      }
+
+      var res = await api_post("/project/preview_text", fdata);
+      let datajs = await res.json();
+      if(datajs["status"]==="success"){
+        var data = datajs["data"];
+        var text = "SAMPLES : " + data["start"] + " | " + data["end"];
+        document.getElementById("preview-text").innerText = text;
+      }
+    }
+
+    function set_state_change_button_content(current_state){
+      var state_text=null;
+      var callable=null;
+      var cancel_text=null;
+      let permissions = get_storage_item("permissions");
+      console.log("STATE :", current_state);
+      if(current_state==="ACTIVE"){
+        state_text="Pause";
+        callable="pause";
+        cancel_text="Cancel";
+      }else if(current_state==="PAUSED"){
+        state_text="Resume";
+        callable="resume";
+        cancel_text="Cancel";
+      }else if(current_state==="COMPLETE"){
+        var can_bill = permissions!==null && permissions.includes("BILL_PROJECTS");
+        if (can_bill){
+          state_text="Bill";
+          callable="bill";
+        }
+      }else if(current_state==="CANCELLED"){
+        var can_delete = permissions!==null && permissions.includes("DELETE_PROJECTS");
+        if (can_delete){
+          state_text="Delete";
+          callable="delete";
+        }
+      }else if(current_state==="BILLED"){
+        var can_delete = permissions!==null && permissions.includes("DELETE_PROJECTS");
+        if (can_delete){
+          state_text="Delete";
+          callable="delete";
+        }
+      }
+
+      if(state_text!==null){
+        var shtml = `<div class="dropdown-divider"></div>`;
+        shtml += `<span class="dropdown-item" onclick="handle_state_change('`+callable+`')">`;
+        shtml += state_text;
+        shtml += `</span>`;
+        document.getElementById("state-change-button").innerHTML = shtml;
+      }
+
+      if(cancel_text!==null){
+        var chtml = `<div class="dropdown-divider"></div>`;
+        chtml += `<span class="dropdown-item" onclick="handle_state_change('cancel')">`;
+        chtml += cancel_text;
+        chtml += `</span>`;
+        document.getElementById("cancel-button").innerHTML = chtml;
+      }
+
+    }
+
+    async function fill_from_data(){
+      var name = get_storage_item("project-name");
+      var creator = get_storage_item("project-creator");
+      if (validate_string(name)){
+        var res = await api_get("/project/get?name="+name+"&username="+creator);
+        var datajs = await res.json();
+        console.log(datajs);
+
+        if (datajs["status"]==="success"){
+          let data = datajs["data"];
+          mainform.name.value=data["name"];
+          mainform.state.value=data["state"];
+          mainform.startvalue.value=data["start_value"];
+          mainform.count.value=data["total"];
+          mainform.description.value=data["description"];
+          mainform.qr_serial_length.value=data["qr_serial_length"];
+          mainform.csv_serial_length.value=data["csv_serial_length"];
+          mainform.pre_string.value = data["pre_string"];
+          mainform.pro_string.value = data["pro_string"];
+          mainform.configurations.value = data["config_name"];
+          set_storage_item("project-name", data["name"]);
+
+          let state_bgcolor = "#d3d3d3";
+          if (data["state"]==="ACTIVE"){
+            state_bgcolor = "#add8e6";
+          }else if (data["state"]==="PAUSED"){
+            state_bgcolor = "#fcd299";
+          }else if (data["state"]==="CANCELLED"){
+            state_bgcolor = "#ff726f";
+          }if (data["state"]==="COMPLETE"){
+            state_bgcolor = "#90ee90";
+            if(interval!==null){
+              clearInterval(interval);
+            }
+          }
+          console.log("State :", state_bgcolor);
+          mainform.state.style.backgroundColor = state_bgcolor;
+
+          update_preview_section();
+          set_state_change_button_content(data["state"]);
+        }else{
+          if(interval!==null){
+            clearInterval(interval)
+          }
+          alert(datajs["message"]);
+        }
+      }
+    }
+
+    async function handle_state_change(_state){
+      // set an updater
+      let name = get_storage_item("project-name");
+      let creator = get_storage_item("project-creator");
+      if (validate_string(name)){
+        let res = await api_get("/project/"+_state+"?name="+name+"&username="+creator);
+        if(_state!=="resume"){
+          let datajs = await res.json();
+          if (datajs['status']==="success"){
+            alert(datajs["data"]);
+          }else{
+            alert(datajs['message']);
+          }
+        }
+        window.location.href = "view_project.html";
+      }
+    }
+
+    fill_from_data();
+    interval = setInterval(fill_from_data, 3000);
+    
+  </script>
+
+</body>
+
+</html>

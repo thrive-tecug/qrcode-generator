@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title id="main-title"></title>
+
+  <!-- Custom fonts for this template-->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+  <!-- Custom styles for this template-->
+  <link href="css/sb-admin-2.min.css" rel="stylesheet">
+  <style>
+  .menu-nav {
+       
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .menu-item {
+    color: #FCC;
+    padding: 3px;
+  }
+  
+  .three-dots:after {
+    cursor: pointer;
+    color: #444;
+    content: '\2807';
+    font-size: 20px;
+    padding: 0 5px;
+  }
+  
+  a {
+    text-decoration: none;
+    color: white;
+  }
+  
+  a div {
+    padding: 2px;
+  }
+  
+  .dropdown {
+    position: absolute;
+    right: 10px;
+    background-color: #66D;
+    
+    outline: none;
+    opacity: 0;
+    z-index: -1;
+    max-height: 0;
+    transition: opacity 0.1s, z-index 0.1s, max-height 5s;
+  }
+  
+  .dropdown-container:focus {
+    outline: none;
+  }
+  
+  .dropdown-container:focus .dropdown {
+    opacity: 1;
+    z-index: 100;
+    max-height: 100vh;
+    transition: opacity 0.2s, z-index 0.2s, max-height 0.2s;
+  }
+  </style>
+
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="side-bar"></ul>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+          <!-- Topbar Search -->
+          <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+            <div class="input-group">
+              <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." 
+              aria-label="Search" aria-describedby="basic-addon2" id="search-bar">
+              <div class="input-group-append">
+                <button class="btn btn-primary" type="button" onclick="request_data_by_search_text()">
+                  <i class="fas fa-search fa-sm"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+            <div class="topbar-divider d-none d-sm-block"></div>
+
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown no-arrow">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small" id="sidebar-name"></span>
+              </a>
+              <!-- Dropdown - User Information -->
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#" onclick="go_to_profile()">
+                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Profile
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Logout
+                </a>
+              </div>
+            </li>
+
+          </ul>
+
+        </nav>
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+
+          <!-- Page Heading -->
+          <h1 class="h3 mb-2 text-gray-800">Configurations</h1>
+
+          <!-- DataTales Example -->
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">All Configurations</h6>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Folder Batch</th>
+                      <th>Error Correction</th>
+                      <th>Box Size</th>
+                      <th>Border</th>
+                      <th>Fore Color</th>
+                      <th>Back Color</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="table-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <!-- /.container-fluid -->
+
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      <footer class="sticky-footer bg-white">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright &copy; QRGEN 2023</span>
+          </div>
+        </div>
+      </footer>
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <!-- Logout Modal-->
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-primary" href="login.html">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="js/sb-admin-2.min.js"></script>
+
+  <!-- Page level custom scripts -->
+  <script src="js/sidebar.js"></script>
+  <script src="js/utils.js"></script>
+
+  <script>
+    var name = get_active_name();
+    console.log("name :", name);
+
+    // FILLING PAGE
+    document.getElementById("main-title").innerText = get_app_name()+" - Configurations";
+    document.getElementById("sidebar-name").innerText = name;
+
+    var get_data = function(){
+        return ["ALL",0,20];
+    }
+
+    function validate_data(){
+        var qdata = get_data();
+        var category=qdata[0];
+        var start=qdata[1];
+        var limit=qdata[2];
+
+        var msg = null;
+        if(!validate_string(qdata)){
+            msg = "Category not set correctly";
+        }else if(start<0){
+            msg = "Start Value not set correctly";
+        }else if(limit<0){
+            msg = "Limit not set correctly";
+        }
+        return msg;
+    }
+
+    function table_from_data(data){
+      var content="";
+      for(var i=0; i<data.length; i++){
+        var obj = data[i];
+        var id_core = obj['name'];
+        var row = "<tr id='"+id_core+"-tr'>"
+        row += "<td>"+obj["name"]+"</td>";
+        row += "<td>"+obj["folder_batch"]+"</td>";
+        row += "<td>"+obj["error_correction"]+"</td>";
+        row += "<td>"+obj["box_size"]+"</td>";
+        row += "<td>"+obj["border"]+"</td>";
+        row += "<td>"+obj["fgcolor"]+"</td>";
+        row += "<td>"+obj["bgcolor"]+"</td>";
+        // menu
+        row += `<td>
+          <div class="menu-nav">
+            <div class="dropdown-container" tabindex="-1">
+              <div class="three-dots"></div>
+              <div class="dropdown">
+                <div id='`+id_core+`' onclick="prepare_and_load_config_view(this)" class="mr-2 ml-2 text-gray-400">
+                  <span>View</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>`;
+        row += "</tr>";
+        
+        content += row;
+      }
+      return content;
+    }
+
+    async function request_data(){
+        var msg = validate_data();
+        if (msg!==null){
+            alert(msg);
+            return;
+        }
+
+        var qdata = get_data();
+        var category=qdata[0];
+        var start=qdata[1];
+        var limit=qdata[2];
+
+        var res = await api_get("/configuration/list");
+        var datajs = await res.json();
+        console.log("DATAJS :", datajs);
+        if (datajs["status"]!=="success"){
+          alert(datajs["message"]);
+        }else{
+          var projects = datajs["data"];
+          var rows = table_from_data(projects);
+          var table_body = document.getElementById("table-body");
+          table_body.innerHTML = rows;
+        }
+     }
+     request_data();
+
+     // search feature
+    async function request_data_by_search_text(){
+      var search_bar = document.getElementById("search-bar");
+      var text = search_bar.value;
+      console.log("TEXT:", text);
+      if (!validate_string(text)){
+        request_data();
+        return;
+      }
+      
+      var res = await api_get("/configurations/search/"+text);
+      var datajs = await res.json();
+      console.log("DATAJS :", datajs);
+      if (datajs["status"]!=="success"){
+        alert(datajs["message"]);
+      }else{
+        var users = datajs["data"];
+        var rows = table_from_data(users);
+        var table_body = document.getElementById("table-body");
+        table_body.innerHTML = rows;
+      }
+    }
+
+    async function prepare_and_load_config_view(e){
+      e = e || window.event;
+      var src = e.target || e.srcElement;
+
+      console.log("E :", e.id);
+      set_storage_item("config-name", e.id);
+      window.location.href = "view_configuration.html";
+    }
+  </script>
+
+</body>
+
+</html>
