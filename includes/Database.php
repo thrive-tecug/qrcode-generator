@@ -180,14 +180,45 @@ class Database{
         return self::execute($query, $values, $typestring, false);
     }
 
-    public static function fetch_rows_like($table_name, $column, $pattern, $condition_assoc){
+    public static function fetch_rows_like($table_name, $column, $pattern, $condition_assoc, $limit=null, $offset=0){
         $condition_data = self::construct_where_clause($condition_assoc);
         $clause = $condition_data[0];
         $values = $condition_data[1];
         $typestring = $condition_data[2];
         $where_clause = count($values)>0 ? $clause." AND " : "";
+        $limit_string = ($limit===null) ? "" : "LIMIT $limit OFFSET $offset";
 
-        $query = "SELECT * FROM $table_name WHERE ".$where_clause." $column LIKE '%$pattern%'";
+        $query = "SELECT * FROM $table_name WHERE ".$where_clause." $column LIKE '%$pattern%' ".$limit_string;
+        return self::execute($query, $values, $typestring, true);
+    }
+
+    public static function fetch_joinable_rows_like($main_table_name, $join_table_name, $pattern, $pattern_column, $condition_assoc, $join_pair, $join_columns=['*'], $limit=null, $offset=0, $order_by="id", $ascending=true){
+        // fetches rows like that match the clause with joinability
+        $condition_data = self::construct_where_clause($condition_assoc, "and", $main_table_name);
+        $clause = $condition_data[0];
+        $values = $condition_data[1];
+        $typestring = $condition_data[2];
+
+        $where_clause = count($values)>0 ? $clause." AND ": "";
+        $order = $ascending ? "ASC" : "DESC";
+        $limit_string = $limit==null ? "":"LIMIT $limit OFFSET $offset";
+        $join_fetchables = "";
+        $i=0;
+        foreach($join_columns as $key=>$val){
+            $join_fetchables.="$join_table_name.$key as $val";
+            if($i+1<count($join_columns)){
+                $join_fetchables.=",";
+            }
+            $i++;
+        }
+        $main_join_col = $join_pair[0];
+        $other_join_col = $join_pair[1];
+        $pattern_column = $main_table_name.".".$pattern_column;
+        $query = "SELECT $main_table_name.*,"."$join_fetchables FROM $main_table_name ";
+        $query.="LEFT JOIN $join_table_name ON $main_table_name.$main_join_col=$join_table_name.$other_join_col ";
+        $query.="WHERE ".$where_clause." $pattern_column LIKE '%$pattern%'"." ORDER BY $main_table_name.$order_by $order ".$limit_string;
+        $fetched = self::execute($query, $values, $typestring, true);
+
         return self::execute($query, $values, $typestring, true);
     }
 
@@ -232,23 +263,6 @@ class Database{
         $query="UPDATE $table_name SET ".$update_clause." WHERE ".$where_clause;
         $updated = self::execute($query, $values, $update_typestring.$where_typestring, false);
         return $updated;
-    }
-
-    // ---------------
-
-    public function check_row_exists($table_name, $where_clause_data){
-        // ?
-        self::__init__();
-        $where_clause = $self::get_condition_clause($where_clause_data);
-        $values = [];
-        $typestring = "";
-        foreach($where_clause_data as $key=>$arr){
-            array_push($values, $arr[1]);
-            $typestring.=$arr[2];
-        }
-        $query = "SELECT * FROM $table_name WHERE ".$where_clause;
-        $fetched = self::execute($query, $values, $typestring, true);
-        return ($fetched!==null);
     }
 
 }

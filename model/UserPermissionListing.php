@@ -62,7 +62,7 @@ class UserPermissionListing{
         Database::execute($query, [$user_id,$permission_id,$granted_by], "sss", false);
     }
 
-    public static function get_listings_for_id($user_id){
+    public static function fetch_instances_by_id($user_id){
         $rows = Database::fetch_rows_by_condition(self::$table_name, ["user_id"=>[$user_id, 'i']]);
         if ($rows!==null){
             $listings = [];

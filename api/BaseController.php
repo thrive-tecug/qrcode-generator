@@ -107,7 +107,7 @@ class BaseController{
     }
 
     public function send_unprocessable_entity(){
-        self::sendInternalError("Unprocessable Entity.");
+        self::send_internal_error("Unprocessable Entity.");
     }
 }
 

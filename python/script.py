@@ -149,6 +149,6 @@ else:
         utils.delete_message(message=utils.REC_ACTIVE,  path=param_dict["string"])
         utils.delete_message(message=utils.REC_PAUSE,  path=param_dict["string"])
         utils.send_message(message=utils.REC_CANCEL, path=param_dict["string"])
-        response = {"status":"success", "data":"Operation successfull!" + param_dict["string"]}
+        response = {"status":"success", "data":"Operation successfull!"}
 
     print(response)

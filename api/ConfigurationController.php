@@ -101,10 +101,29 @@ class ConfigurationController extends BaseController{
     }
 
     public function list_action(){
+        $arrQueryStringParams = BaseController::get_query_string_params();
+        $start_chk = isset($arrQueryStringParams["start"]) && $arrQueryStringParams["start"];
+        $limit_chk = isset($arrQueryStringParams["limit"]) && $arrQueryStringParams["limit"];
+
+        $start = 0;
+        if($start_chk){
+            $_start = $arrQueryStringParams["start"];
+            if (is_numeric($_start)){
+                $start = intval($_start);
+            }
+        }
+        $limit = null;
+        if($limit_chk){
+            $_limit = $arrQueryStringParams["limit"];
+            if (is_numeric($_limit)){
+                $limit = intval($_limit);
+            }
+        }
+
         if(true){
             $ret_assoc = ["status"=>"failed", "message"=>"An error occured on our end!"];
-            $configs = $this->user->get_configurations();
-            if($configs!==null && count($configs)>0){
+            $configs = $this->user->get_configurations($limit, $start);
+            if($configs!==null){
                 $data = [];
                 foreach($configs as $config){
                     array_push($data, $config->as_dict());
@@ -121,10 +140,28 @@ class ConfigurationController extends BaseController{
     public function search_action(){
         $arrQueryStringParams = BaseController::get_query_string_params();
         $text_chk = isset($arrQueryStringParams["text"]) &&  $arrQueryStringParams["text"];
+        $start_chk = isset($arrQueryStringParams["start"]) && $arrQueryStringParams["start"];
+        $limit_chk = isset($arrQueryStringParams["limit"]) && $arrQueryStringParams["limit"];
+
+        $start = 0;
+        if($start_chk){
+            $_start = $arrQueryStringParams["start"];
+            if (is_numeric($_start)){
+                $start = intval($_start);
+            }
+        }
+        $limit = null;
+        if($limit_chk){
+            $_limit = $arrQueryStringParams["limit"];
+            if (is_numeric($_limit)){
+                $limit = intval($_limit);
+            }
+        }
+
         if($text_chk){
             $text = $arrQueryStringParams["text"];
             $ret_assoc = ["status"=>"failed", "message"=>"An error occured on our end!"];
-            $configs = $this->user->find_configurations_like($text);
+            $configs = $this->user->find_configurations_like($text, $limit, $start);
             if($configs!==null){
                 $data = [];
                 foreach($configs as $config){

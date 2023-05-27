@@ -162,7 +162,7 @@ class UserController{
             $email=$_POST["email"];
             $password=$_POST["password"];
             $ret_assoc = ["status"=>"failed", "message"=>"An error occured on our end!"];
-            $exist_users =  User::fetch_rows_by_condition(["username"=>[$username, 's']]);
+            $exist_users =  User::fetch_instances_by_condition(["username"=>[$username, 's']]);
             if ($exist_users===null || count($exist_users)==0){
                 User::__add_user($name,$username,$email,$password,null,false);
                 $ret_assoc = ["status"=>"success", "data"=>"user added!"];
@@ -191,10 +191,29 @@ class UserController{
     }
 
     public function list_action(){
+        $arrQueryStringParams = BaseController::get_query_string_params();
+        $start_chk = isset($arrQueryStringParams["start"]) && $arrQueryStringParams["start"];
+        $limit_chk = isset($arrQueryStringParams["limit"]) && $arrQueryStringParams["limit"];
+
+        $start = 0;
+        if($start_chk){
+            $_start = $arrQueryStringParams["start"];
+            if (is_numeric($_start)){
+                $start = intval($_start);
+            }
+        }
+        $limit = null;
+        if($limit_chk){
+            $_limit = $arrQueryStringParams["limit"];
+            if (is_numeric($_limit)){
+                $limit = intval($_limit);
+            }
+        }
+
         if(true){
             try{
                 $ret_assoc = ["status"=>"failed", "message"=>"An error occured on our end!"];
-                $users = $this->user->get_users();
+                $users = $this->user->get_users($limit, $start);
                 $data=[];
                 foreach($users as $user){
                     array_push($data, $user->as_dict());
@@ -203,7 +222,7 @@ class UserController{
                 $responseData = json_encode($ret_assoc);
                 BaseController::send_json($responseData);
             }catch(Error $e){
-                BaseController::sendInternalError($e->getMessage().", Sorry, something went wrong on our end!");
+                BaseController::send_internal_error($e->getMessage().", Sorry, something went wrong on our end!");
             }
         }else{
             BaseController::send_internal_error("Uprocessable entity");
@@ -214,10 +233,28 @@ class UserController{
         // search by username
         $arrQueryStringParams = BaseController::get_query_string_params();
         $text_chk = isset($arrQueryStringParams["text"]) &&  $arrQueryStringParams["text"];
+        $start_chk = isset($arrQueryStringParams["start"]) && $arrQueryStringParams["start"];
+        $limit_chk = isset($arrQueryStringParams["limit"]) && $arrQueryStringParams["limit"];
+
+        $start = 0;
+        if($start_chk){
+            $_start = $arrQueryStringParams["start"];
+            if (is_numeric($_start)){
+                $start = intval($_start);
+            }
+        }
+        $limit = null;
+        if($limit_chk){
+            $_limit = $arrQueryStringParams["limit"];
+            if (is_numeric($_limit)){
+                $limit = intval($_limit);
+            }
+        }
+
         if($text_chk){
             $text = $arrQueryStringParams["text"];
             $ret_assoc = ["status"=>"failed", "message"=>"An error occured on our end!"];
-            $users_by_username = $this->user->find_users_like_username($text);
+            $users_by_username = $this->user->find_users_like_username($text, $limit, $start);
             // add by name to-do
             if($users_by_username!==null){
                 $data = [];

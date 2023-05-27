@@ -29,22 +29,4 @@ function execute_script($type, $string,$start,$total,$qlength,$clength,$pre_stri
     return $output;
 }
 
-function send_message($message, $path){
-    $message_path = OUTPUT_PATH.$path."/".$message;
-    file_put_contents($message_path, "");
-}
-
-function receive_message($message, $path){
-    $message_path = OUTPUT_PATH.$path."/".$message;
-    if (file_exists($message_path)){
-        $fh = fopen($message_path, "r");
-        $content = fread($fh);
-        fclose($fh);
-        unlink($message_path);
-        return $content;
-    }
-    return null;
-}
-
-
 ?>

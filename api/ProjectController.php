@@ -119,7 +119,7 @@ class ProjectController {
                 if ($project->state===Project::$STATE_PAUSED){
                     $config = Configuration::fromId($project->configuration_id);
                     if($config===null){
-                        $ret_assoc = ["status"=>"failed", "message"=>sprintf("Unknown configuration `%s`", $config_name)];
+                        $ret_assoc = ["status"=>"failed", "message"=>"Unknown configuration!"];
                     }else{
                         $message_path=$project_user->username."/".$name;
                         // script
@@ -151,14 +151,6 @@ class ProjectController {
         }
     }
 
-    public function get_count(){
-        $user= User::fromName($this->username);
-        $count = $user->get_document_count();
-        $ret_assoc = ['status'=>'success', 'count'=>$count];
-        $responseData = json_encode($ret_assoc);
-        BaseController::send_json($responseData);
-    }
-
     public function progress_action(){
         $arrQueryStringParams = BaseController::get_query_string_params();
         $projectname_chk = isset($arrQueryStringParams["name"]) &&  $arrQueryStringParams["name"];
@@ -180,7 +172,7 @@ class ProjectController {
             $projectname = $arrQueryStringParams["name"];
             $ret_assoc = ["status"=>"failed", "message"=>"An error occured on our end!"];
             // python script -> get active progress
-            $project = Project::fromName($projectname);
+            $project = $project_user->get_project($projectname);
             if ($project===null){
                 $ret_assoc = ["status"=>"failed", "message"=>"No such project!"];
             }else{
@@ -207,9 +199,26 @@ class ProjectController {
         $arrQueryStringParams = BaseController::get_query_string_params();
         $category_chk = isset($arrQueryStringParams["category"]) &&  $arrQueryStringParams["category"];
         $users_chk = isset($arrQueryStringParams["users"]) &&  $arrQueryStringParams["users"];
+        $start_chk = isset($arrQueryStringParams["start"]) && $arrQueryStringParams["start"];
+        $limit_chk = isset($arrQueryStringParams["limit"]) && $arrQueryStringParams["limit"];
+
         $category = "ALL";
         if($category_chk){
-            $category = $arrQueryStringParams["category"];
+            $category = strtoupper($arrQueryStringParams["category"]);
+        }
+        $start = 0;
+        if($start_chk){
+            $_start = $arrQueryStringParams["start"];
+            if (is_numeric($_start)){
+                $start = intval($_start);
+            }
+        }
+        $limit = null;
+        if($limit_chk){
+            $_limit = $arrQueryStringParams["limit"];
+            if (is_numeric($_limit)){
+                $limit = intval($_limit);
+            }
         }
 
         if(true){
@@ -221,9 +230,9 @@ class ProjectController {
                 $projects=null;
                 $data = [];
                 if (!$fetch_all_users){
-                    $projects = $this->user->get_projects($category);
+                    $projects = $this->user->get_projects($category, $limit, $start);
                 }else{
-                    $projects = Project::get_projects(null, $category);
+                    $projects = Project::get_projects(null, $category, $limit, $start);
                 }
                 if($projects!==null){
                     foreach($projects as $project){
@@ -320,9 +329,23 @@ class ProjectController {
     public function bill_action(){
         $arrQueryStringParams = BaseController::get_query_string_params();
         $name_chk = isset($arrQueryStringParams["name"]) &&  $arrQueryStringParams["name"];
+        $username_chk = isset($arrQueryStringParams["username"]) && $arrQueryStringParams["username"];
+
+        $project_user =  $this->user; // virtual-user accessing the project
+        if($username_chk){
+            $username = $arrQueryStringParams["username"];
+            $project_user = User::fromUsername($username);
+            if ($project_user===null){
+                $ret_assoc = ["status"=>"failed", "message"=>"No such project!"];
+                $responseData = json_encode($ret_assoc);
+                BaseController::send_json($responseData);
+                return;
+            }
+        }
+
         if($name_chk){
             $name = $arrQueryStringParams["name"];
-            $project = Project::fromName($name);
+            $project = $project_user->get_project($name);
             $ret_assoc = ["status"=>"failed", "message"=>"An error occurred on our end!"];
             if($project!==null){
                 if($project->state===Project::$STATE_COMPLETE){
@@ -362,7 +385,7 @@ class ProjectController {
         
         if($name_chk){
             $name = $arrQueryStringParams["name"];
-            $project = Project::fromName($name);
+            $project = $project_user->get_project($name);
             $ret_assoc = ["status"=>"failed", "message"=>"An error occurred on our end!"];
             if($project!==null){
                 if($project->state===Project::$STATE_BILLED || $project->state===Project::$STATE_CANCELLED){
@@ -392,15 +415,45 @@ class ProjectController {
     public function search_action(){
         $arrQueryStringParams = BaseController::get_query_string_params();
         $text_chk = isset($arrQueryStringParams["text"]) &&  $arrQueryStringParams["text"];
+        $category_chk = isset($arrQueryStringParams["category"]) &&  $arrQueryStringParams["category"];
         $users_chk = isset($arrQueryStringParams["users"]) &&  $arrQueryStringParams["users"];
+        $start_chk = isset($arrQueryStringParams["start"]) && $arrQueryStringParams["start"];
+        $limit_chk = isset($arrQueryStringParams["limit"]) && $arrQueryStringParams["limit"];
+
+        $start = 0;
+        if($start_chk){
+            $_start = $arrQueryStringParams["start"];
+            if (is_numeric($_start)){
+                $start = intval($_start);
+            }
+        }
+        $limit = null;
+        if($limit_chk){
+            $_limit = $arrQueryStringParams["limit"];
+            if (is_numeric($_limit)){
+                $limit = intval($_limit);
+            }
+        }
+
+        $category=null;
+        if($category_chk){
+            $category = strtoupper($arrQueryStringParams["category"]);
+            if($category!=="ALL" && !in_array($category, Project::get_states())){
+                $ret_assoc = ["status"=>"failed", "message"=>sprintf("Unkown category `%s`", $category)];
+                $responseData = json_encode($ret_assoc);
+                BaseController::send_json($responseData);
+                return;
+            }
+        }
+
         if($text_chk){
             $text = $arrQueryStringParams["text"];
             $ret_assoc = ["status"=>"failed", "message"=>"An error occured on our end!"];
             $projects=null;
             if($users_chk){
-                Project::find_projects_like($text, null);
+                $projects = Project::find_projects_like($text, $category, null, $limit, $start);
             }else{
-                $projects = $this->user->find_projects_like($text);
+                $projects = $this->user->find_projects_like($text, $category, $limit, $start);
             }
             if($projects!==null){
                 $data = [];
@@ -499,7 +552,7 @@ class ProjectController {
 
         if ($name_chk){
             $name = $arrQueryStringParams["name"];
-            $project = Project::fromName($name);
+            $project = $project_user->get_project($name);
             $ret_assoc = ["status"=>"failed", "message"=>"No response!"];
             if ($project===null){
                 $ret_assoc = ["status"=>"failed", "message"=>"Project does not exist!"];
@@ -547,7 +600,7 @@ class ProjectController {
 
         if ($name_chk){
             $name = $arrQueryStringParams["name"];
-            $project = Project::fromName($name);
+            $project = $project_user->get_project($name);
             $ret_assoc = ["status"=>"failed", "message"=>"An error occured!"];
             if ($project===null){
                 $ret_assoc = ["status"=>"failed", "message"=>"Project does not exist!"];

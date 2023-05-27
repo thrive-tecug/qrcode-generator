@@ -123,9 +123,9 @@ class User{
         $this->approved=$data['approved'];
     }
 
-    public static function fetch_rows_by_condition($condition_assoc){
-        $rows = Database::fetch_rows_by_condition(self::$table_name, $condition_assoc);
-        if ($rows!==null && count($rows)>0){
+    public static function fetch_instances_by_condition($condition_assoc, $limit=null, $offset=0){
+        $rows = Database::fetch_rows_by_condition(self::$table_name, $condition_assoc, $limit, $offset);
+        if ($rows!==null){
             $users = [];
             foreach($rows as $data){
                 array_push($users, self::fromData($data));
@@ -203,7 +203,7 @@ class User{
         
     public function get_project($name){
         // gets the project with this name that belongs to the user
-        $projects = Project::fetch_projects_by_condition_with_config_name(["name"=>[$name,"s"], "created_by"=>[$this->id,"i"]]);
+        $projects = Project::fetch_instances_by_condition_with_config_name(["name"=>[$name,"s"], "created_by"=>[$this->id,"i"]]);
         if ($projects!==null && count($projects)>0){
             return $projects[0];
         }
@@ -217,10 +217,10 @@ class User{
     }
 
     public function get_configuration_by_name($name){
-        return Configuration::get_configuration_by_id_and_name($this->id, $name);
+        return Configuration::fetch_instance_by_id_and_name($this->id, $name);
     }
 
-    public function get_projects($category=null){
+    public function get_projects($category=null, $limit=null, $start=0){
         $condition_assoc = ["created_by"=>[$this->id, 'i']];
         if ($category!==null){
             if ($category==='ALL'){
@@ -232,12 +232,12 @@ class User{
             }
         }
 
-        $projects = Project::fetch_projects_by_condition_with_username($condition_assoc);
+        $projects = Project::fetch_instances_by_condition_with_username($condition_assoc, $limit, $start);
         return $projects;
     }
         
     public function get_user($username){
-        $self_perm_listings = UserPermissionListing::get_listings_for_id($this->id);
+        $self_perm_listings = UserPermissionListing::fetch_instances_by_id($this->id);
         $self_perm_ids = [];
         foreach($self_perm_listings as $listing){
             array_push($self_perm_ids, $listing->permission_id);
@@ -246,24 +246,24 @@ class User{
         if(!in_array("VIEW_USERS", $self_perm_codes) && $username!=$this->username){
             return null;
         }
-        $users = User::fetch_rows_by_condition(["username"=>[$username, 's']]);
+        $users = self::fetch_instances_by_condition(["username"=>[$username, 's']]);
         if ($users!==null && count($users)>0){
             return $users[0];
         }
         return null;
     }
 
-    public function get_users(){
+    public function get_users($limit=null, $start=0){
         // returns list of all users except self
-        $users = User::fetch_rows_by_condition(["username"=>[$this->username, 's', null, "!="]]);
+        $users = self::fetch_instances_by_condition(["username"=>[$this->username, 's', null, "!="]], $limit, $start);
         if ($users===null){
             return [];
         }
         return $users;
     }
     
-    public function find_users_like_name($name){
-        $rows = Database::fetch_rows_like(self::$table_name, "name", $name, []);
+    public function find_users_like_name($name, $limit=null, $offset=0){
+        $rows = Database::fetch_rows_like(self::$table_name, "name", $name, [], $limit, $offset);
         if ($rows!==null){
             $users = [];
             foreach($rows as $data){
@@ -274,8 +274,9 @@ class User{
         return null;
     }
     
-    public function find_users_like_username($username){
-        $rows = Database::fetch_rows_like(self::$table_name, "username", $username, []);
+    public function find_users_like_username($username, $limit=null, $offset=0){
+        $condition_assoc = ["username"=>[$this->username, 's', null, "!="]];
+        $rows = Database::fetch_rows_like(self::$table_name, "username", $username, $condition_assoc, $limit, $offset);
         if ($rows!==null){
             $users = [];
             foreach($rows as $data){
@@ -286,20 +287,20 @@ class User{
         return null;
     }
 
-    public function find_projects_like($pattern){
-        return Project::find_projects_like($pattern, $this->id); // depending on permission
+    public function find_projects_like($pattern, $category=null, $limit=null, $start=0){
+        return Project::find_projects_like($pattern, $category, $this->id, $limit, $start); // depending on permission
     }
 
-    public function find_configurations_like($pattern){
-        return Configuration::find_configurations_like($pattern, $this->id);
+    public function find_configurations_like($pattern, $limit=null, $offset=0){
+        return Configuration::find_configurations_like($pattern, $this->id, $limit, $offset);
     }
     
     public function add_configuration($name,$folder_batch,$version,$error_correction,$box_size,$border,$fgcolor,$bgcolor){
         Configuration::insert($name,$this->id,$folder_batch,$version,$error_correction,$box_size,$border,$fgcolor,$bgcolor);
     }
     
-    public function get_configurations(){
-        return Configuration::get_configurations_by_id($this->id);
+    public function get_configurations($limit=null, $offset=0){
+        return Configuration::fetch_instances_by_id($this->id, $limit, $offset);
     }
 
     public function count_users(){
@@ -320,12 +321,12 @@ class User{
     }
     
     public function get_permissions(){
-        $listings = UserPermissionListing::get_listings_for_id($this->id);
+        $listings = UserPermissionListing::fetch_instances_by_id($this->id);
         return $listings;
     }
     
     public function get_permissions_for_user($user_id){
-        return UserPermissionListing::get_listings_for_id($user_id);
+        return UserPermissionListing::fetch_instances_by_id($user_id);
     }
 
     public function update_approved_status($approved){

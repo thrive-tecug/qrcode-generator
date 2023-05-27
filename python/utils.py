@@ -2,13 +2,11 @@ import os
 import shutil
 import zipfile
 import threading
-from multiprocessing import Process
 import time
 import qrcode
 import io
 import base64
 import re
-import glob
 
 ROOT = os.getcwd()
 OUTPUT_FOLDER = os.path.join(ROOT, "OUTPUT") # folder where to put user's files
@@ -326,7 +324,7 @@ def receive_message(message, path, delete=True):
         return content
     return None
 
-def request_state(requestable, path, timeout=2, delete_rec=False):
+def request_state(requestable, path, timeout=3, delete_rec=False):
     # actively requests state from listener
     receivable = requestable.replace("req", "rec")
     delete_message(receivable, path=path)
@@ -337,7 +335,7 @@ def request_state(requestable, path, timeout=2, delete_rec=False):
         content = receive_message(receivable, path=path, delete=delete_rec)
         if content is not None:
             break
-        time.sleep(1)
+        time.sleep(0.3)
         i+=1
     delete_message(requestable, path=path)
     return content

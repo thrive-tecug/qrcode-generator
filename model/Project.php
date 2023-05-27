@@ -137,9 +137,9 @@ class Project{
         $qr_serial_length,$created_by,$progress,$created_on,$state,$configuration_id], $typestring, false);
     }
     
-    public static function fetch_rows_by_condition($condition_assoc, $limit=null, $offset=0){
+    public static function fetch_instances_by_condition($condition_assoc, $limit=null, $offset=0){
         $projects = Database::fetch_rows_by_condition(self::$table_name,$condition_assoc,$limit, $offset, "id", false);
-        if ($projects!==null && count($projects)>0){
+        if ($projects!==null){
             $res = [];
             foreach($projects as $data){
                 array_push($res, self::fromData($data));
@@ -152,7 +152,7 @@ class Project{
     public static function fetch_joinable_projects_by_condition($join_table, $condition_assoc, $join_pair, $join_cols, $limit=null, $offset=0, $order_by="id", $ascending=false){
         // returns projects after joining 
         $rows = Database::fetch_joinable_rows_by_condition(self::$table_name,$join_table, $condition_assoc,$join_pair,$join_cols, $limit, $offset, $order_by, $ascending);
-        if ($rows!==null && count($rows)>0){
+        if ($rows!==null){
             $res = [];
             foreach($rows as $data){
                 array_push($res, self::fromData($data));
@@ -162,12 +162,12 @@ class Project{
         return null;
     }
 
-    public static function fetch_projects_by_condition_with_username($condition_assoc, $limit=null, $offset=0){
+    public static function fetch_instances_by_condition_with_username($condition_assoc, $limit=null, $offset=0){
         // returns projects including their creator usernames
         return self::fetch_joinable_projects_by_condition(User::get_table_name(), $condition_assoc, ['created_by', 'id'], ['username'=>'creator'], $limit, $offset);
     }
 
-    public static function fetch_projects_by_condition_with_config_name($condition_assoc, $limit=null, $offset=0){
+    public static function fetch_instances_by_condition_with_config_name($condition_assoc, $limit=null, $offset=0){
         return self::fetch_joinable_projects_by_condition(Configuration::get_table_name(), $condition_assoc, ['configuration_id', 'id'], ['name'=>'config_name'], $limit, $offset);
     }
     
@@ -213,7 +213,7 @@ class Project{
         return null;
     }
 
-    public static function get_projects($user_id=null, $category="ALL"){
+    public static function get_projects($user_id=null, $category="ALL", $limit=null, $start=0){
         $condition_assoc = [];
         if (in_array($category, self::get_states())){
             $condition_assoc["state"] = [$category, "s"];
@@ -225,16 +225,19 @@ class Project{
         if ($user_id!==null){
             $condition_assoc["created_by"]=[$user_id, "i"];
         }
-        $projects = self::fetch_projects_by_condition_with_username($condition_assoc);
+        $projects = self::fetch_instances_by_condition_with_username($condition_assoc, $limit, $start);
         return $projects;
     }
 
-    public static function find_projects_like($pattern, $user_id=null){
+    public static function find_projects_like($pattern, $category=null, $user_id=null, $limit=null, $start=0){
         $condition_assoc = [];
         if($user_id!==null){
             $condition_assoc["created_by"] = [$user_id, 'i'];
         }
-        $rows = Database::fetch_rows_like(self::$table_name, "name", $pattern, $condition_assoc);
+        if($category!==null && $category!=="ALL"){
+            $condition_assoc["state"] = [$category, 's'];
+        }
+        $rows = Database::fetch_joinable_rows_like(self::$table_name, User::get_table_name(), $pattern, "name", $condition_assoc, ['created_by', 'id'], ['username'=>'creator'], $limit, $start);
         if ($rows!==null){
             $projects = [];
             foreach($rows as $data){

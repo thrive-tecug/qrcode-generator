@@ -72,7 +72,7 @@ class PermissionController{
             }else{
                 $permission_ids = UserPermission::get_ids_from_codes($list);
                 $this->user->grant_permissions($target_user->id, $permission_ids);
-                $ret_assoc = ["status"=>"success", "data"=>"Permissions granted!"];
+                $ret_assoc = ["status"=>"success", "data"=>"Operation successful!"];
             }
             $responseData = json_encode($ret_assoc);
             BaseController::send_json($responseData);

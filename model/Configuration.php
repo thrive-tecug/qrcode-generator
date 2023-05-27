@@ -123,7 +123,7 @@ class Configuration{
         ];
         $config = new Configuration();
         $config->folder_batch=$data["folder_batch"];
-        $config->versioh=$data["version"];
+        $config->version=$data["version"];
         $config->error_correction=$data["error_correction"];
         $config->box_size=$data["box_size"];
         $config->border=$data["border"];
@@ -132,8 +132,20 @@ class Configuration{
         return $config;
     }
 
-    public static function get_configurations_by_id($id){
-        $rows = Database::fetch_rows_by_condition(self::$table_name, ["user_id"=>[$id, "i"]]);
+    public static function fetch_instances_by_id($id, $limit=null, $offset=0){
+        $rows = Database::fetch_rows_by_condition(self::$table_name, ["user_id"=>[$id, "i"]], $limit, $offset);
+        if ($rows!==null){
+            $configs = [];
+            foreach($rows as $data){
+                array_push($configs, self::fromData($data));
+            }
+            return $configs;
+        }
+        return null;
+    }
+
+    public static function fetch_instances_by_name($name, $limit=null, $offset=0){
+        $rows = Database::fetch_rows_by_condition(self::$table_name, ["name"=>[$name, "s"]], $limit, $offset);
         if ($rows!==null && count($rows)>0){
             $configs = [];
             foreach($rows as $data){
@@ -144,20 +156,8 @@ class Configuration{
         return null;
     }
 
-    public static function get_configurations_by_name($name){
-        $rows = Database::fetch_rows_by_condition(self::$table_name, ["name"=>[$name, "s"]]);
-        if ($rows!==null && count($rows)>0){
-            $configs = [];
-            foreach($rows as $data){
-                array_push($configs, self::fromData($data));
-            }
-            return $configs;
-        }
-        return null;
-    }
-
-    public static function get_configuration_by_id_and_name($id, $name){
-        $rows = Database::fetch_rows_by_condition(self::$table_name, ["user_id"=>[$id,'i'], "name"=>[$name, "s"]]);
+    public static function fetch_instance_by_id_and_name($id, $name, $limit=null, $offset=0){
+        $rows = Database::fetch_rows_by_condition(self::$table_name, ["user_id"=>[$id,'i'], "name"=>[$name, "s"]], $limit, $offset);
         if ($rows!==null && count($rows)>0){
             return self::fromData($rows[0]);
         }
@@ -168,12 +168,12 @@ class Configuration{
         return self::$error_correction_levels;
     }
 
-    public static function find_configurations_like($pattern, $user_id=null){
+    public static function find_configurations_like($pattern, $user_id=null, $limit=null, $offset=0){
         $condition_assoc = [];
         if ($user_id!==null){
             $condition_assoc["user_id"]=[$user_id, "i"];
         }
-        $configs = Database::fetch_rows_like(self::$table_name, "name", $pattern, $condition_assoc);
+        $configs = Database::fetch_rows_like(self::$table_name, "name", $pattern, $condition_assoc, $limit, $offset);
         if ($configs!==null){
             $res = [];
             foreach($configs as $data){
