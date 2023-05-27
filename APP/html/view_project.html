@@ -227,7 +227,6 @@
   <script>
     var name = get_active_name();
     let interval = null;
-    console.log("name :", name);
 
     // FILLING PAGE
     document.getElementById("main-title").innerText = get_app_name() + " - Project";
@@ -293,7 +292,6 @@
       var callable=null;
       var cancel_text=null;
       let permissions = get_storage_item("permissions");
-      console.log("STATE :", current_state);
       if(current_state==="ACTIVE"){
         state_text="Pause";
         callable="pause";
@@ -378,7 +376,6 @@
               clearInterval(interval);
             }
           }
-          console.log("State :", state_bgcolor);
           mainform.state.style.backgroundColor = state_bgcolor;
 
           update_preview_section();

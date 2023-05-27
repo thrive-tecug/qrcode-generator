@@ -253,7 +253,6 @@
     let active_start = "uproject-list-start";
     let category = "ALL";
     var name = get_active_name();
-    console.log("name :", name);
 
     // FILLING PAGE
     document.getElementById("main-title").innerText = get_app_name() + " - Projects";
@@ -306,8 +305,6 @@
       var start = get_current_start();
       var limit = get_page_limit();
       var page_number = parseInt(start/limit)+1;
-      console.log("page :"+page_number+","+start);
-      console.log("page :"+page_number+","+start);
       document.getElementById("page-number").innerText=page_number;
     }
 
@@ -328,7 +325,6 @@
         link = link+"&users=true&category="+category;
         var res = await api_get(link);
         var datajs = await res.json();
-        console.log("DATAJS :", datajs);
         if (datajs["status"]!=="success"){
           alert(datajs["message"]);
           return 0;
