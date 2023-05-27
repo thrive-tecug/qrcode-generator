@@ -346,8 +346,7 @@
       if (validate_string(name)){
         var res = await api_get("/project/get?name="+name+"&username="+creator);
         var datajs = await res.json();
-        console.log(datajs);
-
+        
         if (datajs["status"]==="success"){
           let data = datajs["data"];
           mainform.name.value=data["name"];
@@ -369,8 +368,12 @@
             state_bgcolor = "#fcd299";
           }else if (data["state"]==="CANCELLED"){
             state_bgcolor = "#ff726f";
-          }if (data["state"]==="COMPLETE"){
+          }else if (data["state"]==="COMPLETE"){
             state_bgcolor = "#90ee90";
+            if(interval!==null){
+              clearInterval(interval);
+            }
+          }else if(data["state"]==="BILLED"){
             if(interval!==null){
               clearInterval(interval);
             }
@@ -385,6 +388,7 @@
             clearInterval(interval)
           }
           alert(datajs["message"]);
+          window.location.href="my_projects.html";
         }
       }
     }
