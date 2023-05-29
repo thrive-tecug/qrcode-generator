@@ -258,7 +258,7 @@
     // FILLING PAGE
     document.getElementById("main-title").innerText = get_app_name()+" - My Projects";
     document.getElementById("sidebar-name").innerText = name;
-    set_storage_item("project-creator", "");
+    set_storage_item("project-creator", get_active_username());
 
     function table_from_data(data){
       var content="";

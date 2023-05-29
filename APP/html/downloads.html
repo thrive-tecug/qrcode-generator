@@ -194,7 +194,7 @@
       for(var i=0; i<data.length; i++){
         var obj = data[i];
         var id_core=obj;
-        var link = get_api_uri()+"/project/download?name="+projectname+"&file="+obj;
+        var link = get_api_uri()+"/project/download?name="+projectname+"&file="+obj+"&username="+creator;
         var row = `<tr>`;
         row += `<td><a href="`+link+`">`+obj+`</a></td>`;
         row += `</tr>`;
@@ -221,7 +221,6 @@
           table_body.innerHTML = rows;
         }
       }
-    request_downloads();
 
     async function fetch_and_fill_progress(){
       // performs one fetch and update cycle
@@ -242,13 +241,14 @@
       ihtml += `<div class="progress-bar bg-info" role="progressbar" style="width: `+perc+`%" aria-valuenow="`+perc+`" aria-valuemin="0" aria-valuemax="100"></div>`;
       ihtml += `</div>`;
 
-      if (perc==100 && interval!=null){
+      if (perc==100 && interval!==null){
         clearInterval(interval);
       }
 
       document.getElementById("progress-div").innerHTML = ihtml;
     }
 
+    request_downloads();
     fetch_and_fill_progress();
     interval = setInterval(fetch_and_fill_progress, 4000);
    
